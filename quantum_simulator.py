@@ -12,7 +12,6 @@ import random
 class QuantumSimulator:
     def __init__(self):
         self.circuit = QuantumCircuit()
-        # Add 5 qubits with initial states
         # self.circuit.add_qubit(Qubit().set_state(Complex(0.5,0), Complex(0.5,0)))
 
         self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
@@ -24,21 +23,27 @@ class QuantumSimulator:
         self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
         self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
         self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-    
-        self.circuit.add_gate(PauliXGate(), [i for i in range(9)])
 
 
     def run(self):
-
+        # Display initial state
         Qubit.display_all_qubits()
         
         time.sleep(2)
-        # Apply all other gates and measure qubits
+        gates = [PauliYGate()]
+        gate_indicies = [[i for i in range(9)]]
+        self.circuit.set_gates(gates, gate_indicies)
         self.circuit.apply_all_gates()
+        Qubit.display_all_qubits()
 
         time.sleep(2)
-
+        gates = [PauliZGate()]
+        gate_indicies = [[i for i in range(9)]]
+        self.circuit.set_gates(gates, gate_indicies)
+        self.circuit.apply_all_gates()
         Qubit.display_all_qubits()
+
+        time.sleep(2)
         results = self.circuit.measure_all()
 
         Qubit.display_all_qubits()

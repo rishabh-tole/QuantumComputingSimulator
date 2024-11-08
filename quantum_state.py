@@ -9,7 +9,7 @@ class QuantumState:
         print(qubit_indices)
         
         # Loop through each qubit index in the list of qubits to apply the gate
-        for idx in qubit_indices[0]:
+        for idx in qubit_indices:
             # Get the qubit's state vector
             state_vector = self.qubits[idx].get_state()
             

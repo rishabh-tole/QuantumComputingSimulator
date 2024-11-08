@@ -8,8 +8,11 @@ class QuantumCircuit:
     def add_qubit(self, qubit):
         self.qubits.append(qubit)
 
-    def add_gate(self, gate, *qubit_indices):
-        self.gates.append((gate, qubit_indices))
+    def set_gates(self, gates, qubit_indices):
+
+        self.gates = []
+        for i in range(len(gates)):
+            self.gates.append((gates[i], qubit_indices[i]))\
 
     def apply_all_gates(self):
         state = QuantumState(self.qubits)
