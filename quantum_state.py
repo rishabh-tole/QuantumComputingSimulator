@@ -6,8 +6,6 @@ class QuantumState:
         self.qubits = qubits
 
     def apply_gate(self, gate_matrix, qubit_indices):
-        print(qubit_indices)
-        
         # Loop through each qubit index in the list of qubits to apply the gate
         for idx in qubit_indices:
             # Get the qubit's state vector
