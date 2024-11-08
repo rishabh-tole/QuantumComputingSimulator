@@ -25,6 +25,9 @@ class QuantumSimulator:
         self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
 
 
+        for qubit in self.circuit.get_qubits():
+            print(qubit)
+
     def run(self):
         # Display initial state
         Qubit.display_all_qubits()

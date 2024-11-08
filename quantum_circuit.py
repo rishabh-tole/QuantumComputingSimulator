@@ -8,6 +8,9 @@ class QuantumCircuit:
     def add_qubit(self, qubit):
         self.qubits.append(qubit)
 
+    def get_qubits(self):
+        return self.qubits
+
     def set_gates(self, gates, qubit_indices):
 
         self.gates = []
