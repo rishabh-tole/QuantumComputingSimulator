@@ -1,53 +1,51 @@
-from quantum_circuit import QuantumCircuit
 from qubit import Qubit
-from complex import Complex
+from entangled_qubit import EntangledQubit
+from gate import HadamardGate, CNOTGate, PauliXGate, PauliYGate, PauliZGate
+from quantum_circuit import QuantumCircuit
 import time
-from hadamard_gate import HadamardGate
-from pauli_x_gate import PauliXGate
-from pauli_y_gate import PauliYGate
-from pauli_z_gate import PauliZGate
-import random
 
-# Create the QuantumSimulator class
 class QuantumSimulator:
     def __init__(self):
         self.circuit = QuantumCircuit()
-        # self.circuit.add_qubit(Qubit().set_state(Complex(0.5,0), Complex(0.5,0)))
 
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
-        self.circuit.add_qubit(Qubit().set_state(Complex(random.uniform(0, 1), random.uniform(0, 1)), Complex(random.uniform(0, 1), random.uniform(0, 1))))
+        # Add individual qubits
+        for _ in range(3):
+            self.circuit.add_qubit(Qubit())
 
+        # Add entangled qubits (3-qubit Bell state)
+        self.entangled_qubit = EntangledQubit([Qubit(), Qubit(), Qubit()])
+        self.circuit.add_qubit(self.entangled_qubit)
+        self.setup_gates()
 
+    def setup_gates(self):
+        self.circuit.set_gates([
+            HadamardGate(),            # Apply Hadamard to Qubit 0
+            CNOTGate(),            # CNOT between Qubit 0 and 1
+            PauliXGate(),             # Apply Pauli-X to Qubit 1
+            PauliYGate(),             # Apply Pauli-Y to Qubit 2
+            HadamardGate(),           # Apply Hadamard to the entangled qubit
+        ] ,
+        [
+            [0], [0,1], [2], [3], [2]
+        ]
+        
+        )
+
+    def run(self):
+        print("\n--- Initial States ---")
         for qubit in self.circuit.get_qubits():
             print(qubit)
 
-    def run(self):
-        # Display initial state
-        Qubit.display_all_qubits()
-        
-        time.sleep(2)
-        gates = [PauliYGate()]
-        gate_indicies = [[i for i in range(9)]]
-        self.circuit.set_gates(gates, gate_indicies)
+        print("\n--- Applying Gates ---")
         self.circuit.apply_all_gates()
-        Qubit.display_all_qubits()
 
-        time.sleep(2)
-        gates = [PauliZGate()]
-        gate_indicies = [[i for i in range(9)]]
-        self.circuit.set_gates(gates, gate_indicies)
-        self.circuit.apply_all_gates()
-        Qubit.display_all_qubits()
+        print("\n--- Final States ---")
+        for qubit in self.circuit.get_qubits():
+            print(qubit)
 
-        time.sleep(2)
-        results = self.circuit.measure_all()
-
-        Qubit.display_all_qubits()
-        print("Measurement results:", results)
+        print("\n--- Measuring All Qubits ---")
+        for idx, qubit in enumerate(self.circuit.get_qubits()):
+            if isinstance(qubit, EntangledQubit):
+                print(f"Entangled Qubit Measurement: {qubit.measure()}")
+            else:
+                print(f"Qubit {idx} Measurement: {qubit.measure()}")

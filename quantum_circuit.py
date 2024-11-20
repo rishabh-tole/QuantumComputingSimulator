@@ -11,16 +11,10 @@ class QuantumCircuit:
     def get_qubits(self):
         return self.qubits
 
-    def set_gates(self, gates, qubit_indices):
-
-        self.gates = []
-        for i in range(len(gates)):
-            self.gates.append((gates[i], qubit_indices[i]))\
+    def set_gates(self, gates, indices):
+        self.gates = [(gates[i], indices[i]) for i in range(len(gates))]
 
     def apply_all_gates(self):
-        state = QuantumState(self.qubits)
+        quantum_state = QuantumState(self.qubits)
         for gate, qubit_indices in self.gates:
-            gate.apply(state, qubit_indices)
-
-    def measure_all(self):
-        return QuantumState(self.qubits).measure()
+            quantum_state.apply_gate(gate.get_matrix(), qubit_indices)
