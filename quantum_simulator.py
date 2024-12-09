@@ -1,51 +1,55 @@
+from quantum_circuit import QuantumCircuit
 from qubit import Qubit
 from entangled_qubit import EntangledQubit
-from gate import HadamardGate, CNOTGate, PauliXGate, PauliYGate, PauliZGate
-from quantum_circuit import QuantumCircuit
-import time
+from gate import HadamardGate, PauliXGate, PauliYGate, PauliZGate
+
 
 class QuantumSimulator:
     def __init__(self):
         self.circuit = QuantumCircuit()
+        self.entangled = None
 
-        # Add individual qubits
-        for _ in range(3):
+    def setup(self):
+        # Add 2 individual qubits
+        for _ in range(2):
             self.circuit.add_qubit(Qubit())
 
-        # Add entangled qubits (3-qubit Bell state)
-        self.entangled_qubit = EntangledQubit([Qubit(), Qubit(), Qubit()])
-        self.circuit.add_qubit(self.entangled_qubit)
-        self.setup_gates()
+        # Add an entangled qubit (e.g., Bell State |00⟩ + |11⟩)
+        self.entangled = EntangledQubit([Qubit(5,4), Qubit(2,5), Qubit(8,1)])
+        self.circuit.add_qubit(self.entangled)
 
-    def setup_gates(self):
-        self.circuit.set_gates([
-            HadamardGate(),            # Apply Hadamard to Qubit 0
-            CNOTGate(),            # CNOT between Qubit 0 and 1
-            PauliXGate(),             # Apply Pauli-X to Qubit 1
-            PauliYGate(),             # Apply Pauli-Y to Qubit 2
-            HadamardGate(),           # Apply Hadamard to the entangled qubit
-        ] ,
-        [
-            [0], [0,1], [2], [3], [2]
-        ]
-        
-        )
+        # Apply gates
+        self.circuit.add_gate(HadamardGate(), [0])  # Apply Hadamard to first individual qubit
+        self.circuit.add_gate(PauliZGate(), [1])
+        self.circuit.add_gate(PauliXGate(), [2])   # Apply Pauli-X to the entangled qubit
 
     def run(self):
-        print("\n--- Initial States ---")
-        for qubit in self.circuit.get_qubits():
+
+        self.setup()
+
+        print("Initial Qubit States:")
+        for qubit in self.circuit.qubits:
             print(qubit)
 
-        print("\n--- Applying Gates ---")
+        self.entangled.display_entangled_state()
+
+        print("\nApplying Gates...")
         self.circuit.apply_all_gates()
 
-        print("\n--- Final States ---")
-        for qubit in self.circuit.get_qubits():
+        print("\nFinal Qubit States:")
+        for qubit in self.circuit.qubits:
             print(qubit)
+        self.entangled.display_entangled_state()
 
-        print("\n--- Measuring All Qubits ---")
-        for idx, qubit in enumerate(self.circuit.get_qubits()):
-            if isinstance(qubit, EntangledQubit):
-                print(f"Entangled Qubit Measurement: {qubit.measure()}")
-            else:
-                print(f"Qubit {idx} Measurement: {qubit.measure()}")
+
+        print("\nMeasurements:")
+        results = self.circuit.measure_all()
+        print(results)
+
+        self.entangled.display_entangled_state()
+
+
+# Run Simulation
+if __name__ == "__main__":
+    simulator = QuantumSimulator()
+    simulator.run()
