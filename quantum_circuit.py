@@ -7,6 +7,9 @@ class QuantumCircuit:
         self.qubits.append(qubit)
 
     def add_gate(self, gate, target_indices):
+        if any(idx >= len(self.qubits) for idx in target_indices):
+            raise IndexError(f"Target index out of range for gate: {target_indices}. Available qubits: {len(self.qubits)}")
+        print(f"Adding gate {gate.__class__.__name__} to indices {target_indices}")
         self.gates.append((gate, target_indices))
 
 
@@ -16,18 +19,19 @@ class QuantumCircuit:
             if len(indices) == 1:  # Single-qubit gate
                 target = self.qubits[indices[0]]
                 print(f"Applying {gate.__class__.__name__} to Qubit {indices[0]}")
-                gate.apply(target, target_indices=[indices[0]])
-            else:  # Multi-qubit gate
+                gate.apply(target)  # Pass the target qubit
+            elif len(indices) > 1:  # Multi-qubit gate
                 targets = [self.qubits[i] for i in indices]
                 print(f"Applying {gate.__class__.__name__} to Qubits {indices}")
-                # For multi-qubit gates, pass all indices
-                gate.apply(targets[0], target_indices=indices)
+                gate.apply(targets)  # Pass the list of target qubits
+            else:
+                raise ValueError(f"Invalid gate indices: {indices}")
 
     def measure_all(self):
         results = []
         print("\n--- Measuring All Qubits ---")
         for idx, qubit in enumerate(self.qubits):
             result = qubit.measure()
-            print(f"Measurement result for Qubit {idx}: {result}")
+            # print(f"Measurement result for Qubit {idx}: {result}")
             results.append(result)
         return results

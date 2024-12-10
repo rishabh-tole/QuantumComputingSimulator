@@ -34,12 +34,18 @@ class CNOTGate(Gate):
         ])
 
 
-class HadamardGate(Gate):
-    def get_matrix(self):
-        return np.array([
-            [1 / np.sqrt(2), 1 / np.sqrt(2)],
-            [1 / np.sqrt(2), -1 / np.sqrt(2)]
-        ])
+class HadamardGate:
+    def apply(self, target, target_indices=None):
+        """Apply the Hadamard gate to the target qubit."""
+        # Check if the input is a single qubit
+        if not isinstance(target, Qubit):
+            raise ValueError("HadamardGate can only be applied to a single qubit.")
+
+        # Define the Hadamard transformation matrix
+        hadamard_matrix = np.array([[1, 1], [1, -1]]) / np.sqrt(2)
+        
+        # Update the qubit's state
+        target.state = np.dot(hadamard_matrix, target.state)
 
 
 class PauliXGate(Gate):
