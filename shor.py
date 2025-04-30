@@ -187,11 +187,4 @@ class ShorsAlgorithm:
 
         return "Failed to find factors"
 
-# Main entry point
-if __name__ == "__main__":
 
-    number_to_factor = 77  # Example number to factor
-    print(f"Factoring {number_to_factor} using Shor's Algorithm...")
-    shor = ShorsAlgorithm(number_to_factor)
-    factors = shor.run()
-    print(f"Factors of {number_to_factor}: {factors}")
